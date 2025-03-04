@@ -1,0 +1,33 @@
+name: Unreal Engine Windows Build using Docker
+
+on:
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest  # GitHub-hosted Windows runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate to GitHub Container Registry (GHCR)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Pull Docker Image
+        run: docker pull ghcr.io/eddaheim-aps/build-project:windows
+
+      - name: Run Build in Docker
+        run: |
+          docker run --rm -v "${{ github.workspace }}:${{ github.workspace }}" ghcr.io/eddaheim-aps/build-project:windows `
+            "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Build\\BatchFiles\\RunUAT.bat" `
+            BuildCookRun -project="${{ github.workspace }}\YourProject.uproject" `
+            -noP4 -platform=Win64 -clientconfig=Development `
+            -cook -allmaps -build -stage -archive `
+            -archivedirectory="${{ github.workspace }}\Builds"
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unreal-Build
+          path: ${{ github.workspace }}\Builds\*
