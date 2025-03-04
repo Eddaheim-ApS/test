@@ -8,6 +8,17 @@ jobs:
     runs-on: windows-latest  # GitHub-hosted Windows runner
 
     steps:
+
+      - name: List available drives
+        run: Get-PSDrive
+        shell: pwsh
+      - name: "Create D: Drive (if needed)"
+        run: |
+          New-Item -ItemType Directory -Path D:\a\NKHE\NKHE -Force
+        shell: pwsh
+
+
+    
       - name: Checkout repository
         uses: actions/checkout@v3
       
