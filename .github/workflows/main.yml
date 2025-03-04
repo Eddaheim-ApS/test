@@ -9,6 +9,11 @@ jobs:
 
     steps:
 
+      - name: Print Docker Info
+        run: docker info
+        shell: pwsh
+
+      
       - name: List available drives
         run: Get-PSDrive
         shell: pwsh
