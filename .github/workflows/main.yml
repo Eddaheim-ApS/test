@@ -10,6 +10,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      
+      - name: Print current working directory
+        run: echo "Workspace is ${{ github.workspace }}"
+        shell: pwsh
 
       - name: Authenticate to GitHub Container Registry (GHCR)
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
